@@ -1,42 +1,28 @@
-import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+  const id = parseInt(context.params.id);
+  const body = await request.json();
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
-    try {
-        const id = parseInt(params.id);
-        const body = await request.json();
+  const productoActualizado = await prisma.producto.update({
+    where: { id },
+    data: body,
+  });
 
-        const productoActualizado = await prisma.producto.update({
-            where: { id },
-            data: {
-                nombre: body.nombre,
-                precio: parseFloat(body.precio),
-                stock: parseInt(body.stock),
-                categoria: body.categoria,
-            },
-        });
-
-        return NextResponse.json(productoActualizado);
-    } catch (error) {
-        console.error("Error al actualizar producto", error);
-        return NextResponse.json({ error: "Error al actualizar producto" }, { status: 500 });
-    }
+  return new Response(JSON.stringify(productoActualizado), {
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-    try {
-        //  Primero se espera el parametro
-        const { id } = await params;  
 
-        const parsedId = parseInt(id);  // Convertimos el id a número
-        await prisma.producto.delete({
-            where: { id: parsedId },
-        });
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+  const id = parseInt(context.params.id);
 
-        return NextResponse.json({ message: 'Producto eliminado correctamente' });
-    } catch (error) {
-        console.error('Error al eliminar producto:', error);
-        return NextResponse.json({ error: 'Error al eliminar producto' }, { status: 500 });
-    }
+  await prisma.producto.delete({
+    where: { id },
+  });
+
+  return new Response(null, { status: 204 });
 }
+
