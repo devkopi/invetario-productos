@@ -1,10 +1,9 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
-// PUT: Actualizar producto
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
     const body = await request.json();
 
     const productoActualizado = await prisma.producto.update({
@@ -16,16 +15,16 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
-  } catch (error) {
-    console.error('Error al actualizar producto:', error);
-    return new Response(JSON.stringify({ error: 'Error al actualizar producto' }), {
+  } catch (error: unknown) {
+    const mensaje = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('Error al actualizar producto:', mensaje);
+    return new Response(JSON.stringify({ error: 'Error al actualizar producto', detalle: mensaje }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 }
 
-// DELETE: Eliminar producto
 export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   try {
     const id = parseInt(context.params.id);
@@ -35,9 +34,10 @@ export async function DELETE(request: NextRequest, context: { params: { id: stri
     });
 
     return new Response(null, { status: 204 });
-  } catch (error) {
-    console.error('Error al eliminar producto:', error);
-    return new Response(JSON.stringify({ error: 'Error al eliminar producto' }), {
+  } catch (error: unknown) {
+    const mensaje = error instanceof Error ? error.message : 'Error desconocido';
+    console.error('Error al eliminar producto:', mensaje);
+    return new Response(JSON.stringify({ error: 'Error al eliminar producto', detalle: mensaje }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
