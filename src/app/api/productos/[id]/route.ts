@@ -1,42 +1,46 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
-    try {
-        const id = parseInt(context.params.id);
-        const body = await req.json();
-
-        const productoActualizado = await prisma.producto.update({
-            where: { id },
-            data: body,
-        });
-
-        return Response.json(productoActualizado);
-    } catch (error) {
-        console.error("Error al actualizar producto: ", error)
-        return new Response(JSON.stringify({ error: 'Error al actualizar producto' }), {
-            status: 500,
-        });
-    }
-}
-
-
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const id = parseInt(context.params.id);
+    const id = parseInt(params.id);
+    const body = await req.json();
 
-    await prisma.producto.delete({
+    const productoActualizado = await prisma.producto.update({
       where: { id },
+      data: body,
     });
 
-    return new Response(null, { status: 204 });
+    return NextResponse.json(productoActualizado);
   } catch (error) {
-    console.error('Error al eliminar producto:', error);
-
-    return new Response(
-      JSON.stringify({ error: 'Error al eliminar producto' }),
+    console.error("Error al actualizar producto: ", error);
+    return NextResponse.json(
+      { error: 'Error al actualizar producto' },
       { status: 500 }
     );
   }
 }
 
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = parseInt(params.id);
+
+    await prisma.producto.delete({
+      where: { id },
+    });
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error('Error al eliminar producto:', error);
+    return NextResponse.json(
+      { error: 'Error al eliminar producto' },
+      { status: 500 }
+    );
+  }
+}
