@@ -19,28 +19,36 @@ export default function TablaProductos({ productos, onEdit, onDelete }: Props) {
                 </tr>
             </thead>
             <tbody>
-                {productos.map((producto) => (
-                    <tr key={producto.id} className="hover:bg-zinc-50">
-                        <td className="p-2 border">{producto.nombre}</td>
-                        <td className="p-2 border">$ {producto.precio.toFixed(2)}</td>
-                        <td className="p-2 border">{producto.stock}</td>
-                        <td className="p-2 border">{producto.categoria}</td>
-                        <td className="p-2 border text-center space-x-2">
-                            <button
-                                onClick={() => onDelete(producto.id)}
-                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                            >
-                                Eliminar
-                            </button>
-                            <button
-                                onClick={() => onEdit(producto)}
-                                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
-                            >
-                                Editar
-                            </button>
+                {Array.isArray(productos) ? (
+                    productos.map((producto) => (
+                        <tr key={producto.id} className="hover:bg-zinc-50">
+                            <td className="p-2 border">{producto.nombre}</td>
+                            <td className="p-2 border">$ {producto.precio.toFixed(2)}</td>
+                            <td className="p-2 border">{producto.stock}</td>
+                            <td className="p-2 border">{producto.categoria}</td>
+                            <td className="p-2 border text-center space-x-2">
+                                <button
+                                    onClick={() => onDelete(producto.id)}
+                                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+                                >
+                                    Eliminar
+                                </button>
+                                <button
+                                    onClick={() => onEdit(producto)}
+                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                                >
+                                    Editar
+                                </button>
+                            </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan={5} className="p-2 text-center text-red-500">
+                            Error al cargar productos.
                         </td>
                     </tr>
-                ))}
+                )}
             </tbody>
         </table>
     )
